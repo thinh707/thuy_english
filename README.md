@@ -23,12 +23,9 @@ Mở file `So_hoc_tieng_Anh/Mo_trang_hoc.html` bằng Chrome (nhấp đúp là �
 
 ## Thêm buổi học mới
 
-1. Tạo thư mục `tai-lieu/buoi-02` (buổi 3 là `buoi-03`…).
-2. Chép `tai-lieu/MAU.md` vào đó, đổi tên thành `noi-dung.md`, rồi ghi: hôm nay học gì, bài tập về nhà, ghi chú. Viết gạch đầu dòng là đủ.
-3. Bỏ kèm ảnh chụp sách, file mp3, link video vào cùng thư mục.
-4. Commit, push rồi nhắn Claude: **"làm buổi 2"**.
+Gửi cho Claude (trong repo này) ghi chú buổi học, ảnh sách, mp3, link video và bài tập về nhà. Claude tự làm hết, rồi push lên GitHub. Hoặc bỏ tài liệu vào `tai-lieu/buoi-NN/` và nhắn **"làm buổi N"**.
 
-Claude sẽ làm buổi mới theo đúng chuẩn của Buổi 1: phần Học, thẻ ôn, bài tập, bài kiểm tra và ôn toàn bộ buổi. Chuẩn này ghi trong `CLAUDE.md`. Xem ví dụ đã điền ở `tai-lieu/buoi-01/noi-dung.md`. Gửi thẳng nội dung qua chat cũng được: Claude sẽ tự lưu vào `tai-lieu/`.
+Quy trình chi tiết nằm trong skill `.claude/skills/them-buoi/`.
 
 ## Triển khai lên server
 

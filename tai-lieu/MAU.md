@@ -1,15 +1,6 @@
 # Buổi NN · ngày/tháng/năm
 
-<!--
-CÁCH DÙNG
-1. Tạo thư mục tai-lieu/buoi-NN (ví dụ tai-lieu/buoi-02).
-2. Chép file này vào đó, đặt tên noi-dung.md, rồi điền vào các mục bên dưới.
-   Viết gạch đầu dòng, tiếng Việt hay tiếng Anh đều được, không cần đầy đủ.
-3. Bỏ kèm vào cùng thư mục: ảnh chụp sách hoặc bảng, file mp3 cô gửi, file PDF...
-4. git add, commit, push. Rồi nhắn Claude: "làm buổi NN".
-   Claude sẽ đọc thư mục này và làm buổi học theo đúng chuẩn trong CLAUDE.md.
-Mục nào không có thì để trống hoặc xoá đi.
--->
+<!-- Không bắt buộc: gửi thẳng tài liệu cho Claude cũng được. Nếu dùng file này thì chép vào tai-lieu/buoi-NN/noi-dung.md, điền, rồi nhắn "làm buổi N". -->
 
 ## Hôm nay học gì
 
