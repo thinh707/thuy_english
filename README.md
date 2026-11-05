@@ -18,7 +18,17 @@ Mở file `So_hoc_tieng_Anh/Mo_trang_hoc.html` bằng Chrome (nhấp đúp là �
 | `index.html` | Mở tên miền là vào thẳng trang học |
 | `Nghe_1.14-1.15.html` | Trang nghe cũ (bản độc lập) |
 | `deploy/nginx.conf`, `Dockerfile`, `docker-compose.yml` | Triển khai lên server |
+| `tai-lieu/` | Tài liệu gốc từng buổi bạn đưa vào (mẫu: `MAU.md`) |
 | `CLAUDE.md` | Hướng dẫn cho Claude khi thêm buổi mới |
+
+## Thêm buổi học mới
+
+1. Tạo thư mục `tai-lieu/buoi-02` (buổi 3 là `buoi-03`…).
+2. Chép `tai-lieu/MAU.md` vào đó, đổi tên thành `noi-dung.md`, rồi ghi: hôm nay học gì, bài tập về nhà, ghi chú. Viết gạch đầu dòng là đủ.
+3. Bỏ kèm ảnh chụp sách, file mp3, link video vào cùng thư mục.
+4. Commit, push rồi nhắn Claude: **"làm buổi 2"**.
+
+Claude sẽ làm buổi mới theo đúng chuẩn của Buổi 1: phần Học, thẻ ôn, bài tập, bài kiểm tra và ôn toàn bộ buổi. Chuẩn này ghi trong `CLAUDE.md`. Xem ví dụ đã điền ở `tai-lieu/buoi-01/noi-dung.md`. Gửi thẳng nội dung qua chat cũng được: Claude sẽ tự lưu vào `tai-lieu/`.
 
 ## Triển khai lên server
 
