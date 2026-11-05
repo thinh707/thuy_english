@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sổ học tiếng Anh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column; a sticky top bar (home · ôn tập · sổ lỗi sai); each session = header + 3 tabs. */
+:root{
+  --bg:#f6f1e7; --paper:#fffdf8; --ink:#2b2622; --muted:#75695e; --line:#e4dccd;
+  --accent:#c4552b; --accent-soft:#f6e1d6; --ok:#2f7d4f; --ok-soft:#dcefe2;
+  --bad:#b23a3a; --bad-soft:#f6dddd; --hard:#8a6a0c; --hard-soft:#f5ecc8; --mark:#fbe7a6;
+  --shadow:0 1px 2px rgba(60,40,20,.06),0 6px 20px rgba(60,40,20,.07);
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:Fraunces,Georgia,serif;
+  --f-ipa:"Noto Sans","Lucida Grande","Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1916; --paper:#25221e; --ink:#eee7dc; --muted:#a59a8c; --line:#3a352f;
+    --accent:#e57d52; --accent-soft:#3d2a20; --ok:#6cc08d; --ok-soft:#1f3529;
+    --bad:#e27b7b; --bad-soft:#3b2222; --hard:#dcbc5c; --hard-soft:#352d14; --mark:#5a4b1c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1916; --paper:#25221e; --ink:#eee7dc; --muted:#a59a8c; --line:#3a352f;
+  --accent:#e57d52; --accent-soft:#3d2a20; --ok:#6cc08d; --ok-soft:#1f3529;
+  --bad:#e27b7b; --bad-soft:#3b2222; --hard:#dcbc5c; --hard-soft:#352d14; --mark:#5a4b1c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body)}
+a{color:var(--accent)}
+h1,h2,h3,h4{font-family:var(--f-head);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(26px,5vw,34px)} h3{font-size:20px;margin-bottom:8px} h4{font-size:17px;margin:18px 0 8px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ipa,.sym{font-family:var(--f-ipa)}
+.hint{color:var(--muted);font-size:14px;margin:4px 0}
+.label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 2px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;gap:6px 16px;align-items:center;flex-wrap:wrap}
+.brand{font-family:var(--f-head);font-weight:700;font-size:19px;color:var(--ink);text-decoration:none;margin-right:auto}
+.top nav{display:flex;gap:6px;flex-wrap:wrap}
+.top nav a{text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:500}
+.top nav a.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill{display:inline-block;min-width:20px;text-align:center;background:var(--accent);color:#fff;border-radius:99px;font-size:12px;font-weight:700;padding:0 6px;margin-left:4px}
+.pill:empty{display:none}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 90px}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:16px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 16px;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.link{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:0;font-size:14px;text-decoration:none}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.score{font-weight:600}
+.warn{background:var(--bad-soft);border:1px solid var(--bad);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.note{border-left:3px solid var(--accent);padding:8px 14px;background:var(--accent-soft);border-radius:0 10px 10px 0;margin:0 0 16px;font-size:15px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 10px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.speak{border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 12px;font-size:14px;cursor:pointer}
+.speak.sm{padding:0 8px;font-size:13px;margin-left:6px;vertical-align:1px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:50;max-width:calc(100% - 32px)}
+
+/* home */
+.today{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.today .big{font-family:var(--f-head);font-size:30px;font-weight:700;line-height:1.1}
+.sess{display:block;text-decoration:none;color:inherit}
+.sess:hover{border-color:var(--accent)}
+.sess .row{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:6px}
+.sess .row b{color:var(--ink)}
+
+/* session */
+.sess-head{margin-bottom:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs a{text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);padding:7px 14px;border-radius:999px;font-weight:500}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
+details.ex>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center}
+details.ex>summary::-webkit-details-marker{display:none}
+.ex-t{font-family:var(--f-head);font-weight:600;font-size:18px;flex:1;min-width:0}
+.badge{font-size:12px;font-weight:600;border-radius:99px;padding:2px 10px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.ex-body{margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbl{overflow-x:auto}
+
+/* ipa */
+.ipa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.ipa-cell{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 4px;cursor:pointer;display:grid;justify-items:center;gap:0}
+.ipa-cell .sym{font-size:20px;font-weight:600}
+.ipa-cell .w{font-size:13px;color:var(--muted)}
+.ipa-cell.on{border-color:var(--accent);background:var(--accent-soft)}
+.ipa-detail{margin-top:10px;border:1px dashed var(--accent);border-radius:10px;padding:12px 14px}
+.ipa-detail .sym{font-size:28px;font-weight:600;margin-right:10px}
+
+/* questions */
+.q{padding:14px 0;border-top:1px dashed var(--line)}
+.q:first-child{border-top:0}
+.qt{font-weight:600;margin-bottom:8px}
+.qt .n{color:var(--accent);margin-right:6px}
+.tag{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.opts{display:grid;gap:6px}
+.opts.ipa .opt{font-family:var(--f-ipa)}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;background:transparent;text-align:left}
+.opt:hover{border-color:var(--muted)}
+.opt .k{font-weight:700;color:var(--muted);min-width:16px;font-family:var(--f-body)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+input.gap{border:0;border-bottom:2px solid var(--line);background:transparent;padding:2px 4px;width:150px;max-width:100%;text-align:center;outline:none}
+input.gap:focus{border-color:var(--accent)}
+input.gap.right{border-color:var(--ok);color:var(--ok);font-weight:600}
+input.gap.wrong{border-color:var(--bad);color:var(--bad)}
+.fb{display:none;margin-top:8px;font-size:14px;padding:8px 12px;border-radius:8px;background:var(--bg)}
+.fb.show{display:block}
+
+/* listening */
+.player audio{width:100%}
+.speeds{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.speeds .plays{margin-left:auto}
+.ts{border:0;background:none;color:var(--muted);font-size:12px;cursor:pointer;font-variant-numeric:tabular-nums;padding:0;margin-right:4px}
+.ts:hover{color:var(--accent)}
+.transcript p{margin:0 0 10px}
+
+/* shadowing / speaking */
+ol.sent{padding-left:22px;margin:0}
+ol.sent li{margin-bottom:10px}
+ol.sent .en{font-size:17px}
+ol.sent b{color:var(--accent)}
+.links{padding-left:20px;margin:0 0 8px}
+.addlink{display:flex;gap:8px;flex-wrap:wrap}
+.addlink input{flex:1;min-width:200px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px}
+.rec-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rec-btn.on{background:var(--bad);border-color:var(--bad)}
+.rec-time{font-variant-numeric:tabular-nums;font-weight:600;color:var(--bad)}
+.rec-list{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.rec-list li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.rec-list audio{height:34px;flex:1;min-width:200px}
+.rec-list .when{font-size:13px;color:var(--muted);min-width:90px}
+.outline{margin:0;padding-left:20px}
+.phr{display:flex;flex-wrap:wrap;gap:6px}
+.phr span{border:1px solid var(--line);border-radius:8px;padding:2px 8px;font-size:14px;background:var(--bg)}
+
+/* review */
+.rev-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.rev-top span{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.idx{background-color:var(--paper);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);
+  background-image:linear-gradient(var(--accent),var(--accent)),repeating-linear-gradient(to bottom,transparent 0 31px,var(--line) 31px 32px);
+  background-size:100% 2px,100% 100%;background-position:0 44px,0 46px;background-repeat:no-repeat,repeat;
+  padding:10px 20px 24px;min-height:290px;display:flex;flex-direction:column}
+.idx .top2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);height:30px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.idx .face{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:16px;gap:6px}
+.idx .face.left{align-items:stretch;text-align:left}
+.fw{font-family:var(--f-head);font-size:clamp(28px,6vw,40px);font-weight:700;line-height:1.15;overflow-wrap:anywhere}
+.fw.rule{font-size:clamp(20px,4.5vw,25px)}
+.fw.sym{font-family:var(--f-ipa);font-size:clamp(40px,9vw,56px)}
+.fipa{color:var(--muted);font-size:17px;font-family:var(--f-ipa)}
+.fpos{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:600}
+.fvi{font-size:clamp(18px,4vw,23px);font-weight:600}
+.fex{color:var(--muted);font-style:italic;max-width:52ch}
+.fex mark{font-style:normal}
+.divider{width:60%;border:0;border-top:1px dashed var(--line);margin:10px 0}
+.choices{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.choice{min-width:84px;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 14px;font-family:var(--f-ipa);font-size:19px;cursor:pointer}
+.choice.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:600}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.verdict{font-weight:600}.verdict.ok{color:var(--ok)}.verdict.no{color:var(--bad)}
+.wide{width:100%;margin-top:14px;padding:13px}
+.rate{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.rate button{border:1px solid;border-radius:10px;padding:9px 6px;cursor:pointer;display:grid;gap:2px;justify-items:center;font-weight:600}
+.rate small{font-weight:400;font-size:12px;opacity:.85}
+.rate [data-r="1"]{color:var(--bad);background:var(--bad-soft);border-color:var(--bad)}
+.rate [data-r="2"]{color:var(--hard);background:var(--hard-soft);border-color:var(--hard)}
+.rate [data-r="3"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent)}
+.rate [data-r="4"]{color:var(--ok);background:var(--ok-soft);border-color:var(--ok)}
+.rate .hint-on{outline:2px solid currentColor;outline-offset:2px}
+.kbd{color:var(--muted);font-size:13px;text-align:center;margin-top:10px}
+.setup{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.setup label{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.setup select{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 8px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:14px 0}
+.stats div{background:var(--paper);padding:10px 12px}
+.stats b{display:block;font-family:var(--f-head);font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* mistakes */
+.mis{padding:12px 0;border-top:1px dashed var(--line)}
+.mis:first-child{border-top:0}
+.mis .from{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.mis .qq{font-weight:600;margin:2px 0 6px}
+.mis .ans{font-size:14px;display:grid;gap:2px}
+.mis .ans .no{color:var(--bad)} .mis .ans .yes{color:var(--ok)}
+@media (max-width:480px){.rate{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:1fr 1fr 1fr}.today{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="#">Sổ học tiếng Anh</a>
+  <nav>
+    <a href="#on-tap" data-nav="on-tap">Ôn tập<span class="pill" id="navDue"></span></a>
+    <a href="#loi-sai" data-nav="loi-sai">Sổ lỗi sai<span class="pill" id="navWrong"></span></a>
+  </nav>
+</div></header>
+<main class="wrap" id="main"><p class="hint">Đang mở…</p></main>
+
+<script>window.COURSE = window.COURSE || [];</script>
+<!-- Mỗi buổi học là một file trong thư mục du-lieu. Thêm buổi mới = thêm một dòng ở đây. -->
+<script src="du-lieu/buoi-01.js"></script>
+
+<script>
+(() => {
+/* ================= helpers ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const strip = s => String(s ?? "").replace(/<[^>]+>/g, "");
+const norm = s => String(s ?? "").toLowerCase().replace(/[’‘]/g, "'").trim().replace(/[.!?\s]+$/, "").replace(/\s+/g, " ");
+const DAY = 864e5;
+const fmtT = t => { const s = Math.floor(t); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+const fmtDate = d => { const [y, m, dd] = String(d).split("-"); return dd ? `${dd}/${m}/${y}` : d; };
+function speak(text){ try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; u.rate = .9; speechSynthesis.speak(u); } catch(e){} }
+let toastT = null;
+function toast(msg){ let t = $(".toast"); if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.append(t); } t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3500); }
+
+/* ================= saved progress ================= */
+const KEY = "sohoc-v1";
+const blank = () => ({srs:{}, wrong:{}, done:{}, scores:{}, tests:{}, links:{}, newLimit:"10"});
+let storageOK = true;
+try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); } catch(e) { storageOK = false; }
+let S = blank();
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) { storageOK = false; } };
+
+/* ================= course registry ================= */
+const COURSE = window.COURSE.slice().sort((a, b) => a.no - b.no);
+const SESS = {}, ITEMS = {};
+const allQs = ex => [...(ex.gist ? [ex.gist] : []), ...(ex.qs || [])];
+function prepQ(q, s, key, from, audio){
+  if (q.kind === "tf") { q.opts = ["True – Đúng", "False – Sai"]; q.a = q.a ? 0 : 1; q.kind = "mc"; }
+  q.kind = q.kind || (q.opts ? "mc" : "gap");
+  q.gid = key + ":" + q.id; q.sid = s.id; q.from = from;
+  if (audio && q.audio === undefined && q.t !== undefined) q.audio = audio;
+  ITEMS[q.gid] = {gid:q.gid, kind:"q", sid:s.id, q};
+}
+for (const s of COURSE) {
+  SESS[s.id] = s;
+  s.decks = s.decks || [];
+  for (const c of s.cards || []) { c.gid = s.id + ":" + c.id; ITEMS[c.gid] = {gid:c.gid, kind:"card", sid:s.id, card:c}; }
+  for (const ex of s.exercises || []) { ex.key = s.id + ":" + ex.id; allQs(ex).forEach(q => prepQ(q, s, ex.key, ex.title, ex.audio)); }
+  if (s.test) { s.test.key = s.id + ":test"; s.test.qs.forEach(q => prepQ(q, s, s.test.key, "Bài kiểm tra", null)); }
+}
+const deckName = (sid, deck) => (SESS[sid].decks.find(d => d.id === deck) || {name:deck}).name;
+
+/* ================= spaced repetition ================= */
+const startOfDay = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+function schedule(rec, r, now){
+  const p = Object.assign({reps:0, ease:2.5, ivl:0, lapses:0}, rec || {});
+  const n = {reps:p.reps, ease:p.ease, ivl:p.ivl, lapses:p.lapses, last:now};
+  if (r === 1) { n.reps = 0; n.lapses++; n.ease = Math.max(1.3, p.ease - .2); n.ivl = 0; n.due = now + 10 * 60e3; return n; }
+  if (r === 2) { n.ivl = p.reps === 0 ? 1 : Math.max(p.ivl + 1, Math.round(p.ivl * 1.2)); n.ease = Math.max(1.3, p.ease - .15); }
+  if (r === 3) { n.ivl = p.reps === 0 ? 1 : p.reps === 1 ? Math.max(3, p.ivl + 1) : Math.max(p.ivl + 1, Math.round(p.ivl * p.ease)); }
+  if (r === 4) { n.ivl = p.reps === 0 ? 3 : Math.max(p.ivl + 2, Math.round(Math.max(p.ivl, 1) * p.ease * 1.3)); n.ease = p.ease + .15; }
+  n.reps = p.reps + 1;
+  n.due = startOfDay(now) + n.ivl * DAY;
+  return n;
+}
+function fmtIvl(n){
+  if (n.ivl === 0) return "10 phút";
+  if (n.ivl < 30) return n.ivl + " ngày";
+  if (n.ivl < 365) return Math.round(n.ivl / 30) + " tháng";
+  return (n.ivl / 365).toFixed(1).replace(".0", "") + " năm";
+}
+function fmtDue(due, now){
+  if (due == null) return {t:"Mới", due:false};
+  if (due <= now) return {t:"Đến hạn", due:true};
+  const days = Math.round((startOfDay(due) - startOfDay(now)) / DAY);
+  if (days <= 0) return {t:"Hôm nay, " + new Date(due).toLocaleTimeString("vi-VN", {hour:"2-digit", minute:"2-digit"}), due:false};
+  if (days === 1) return {t:"Ngày mai", due:false};
+  return {t:"Sau " + days + " ngày", due:false};
+}
+function markWrong(q, ansText){
+  const now = Date.now(), w = S.wrong[q.gid] || {count:0};
+  S.wrong[q.gid] = {count:w.count + 1, last:now, ans:ansText};
+  const rec = schedule(S.srs[q.gid], 1, now); rec.due = now; S.srs[q.gid] = rec;
+}
+function buildQueue(filter, now){
+  const items = Object.values(ITEMS).filter(it => filter === "all" || it.sid === filter);
+  const due = items.filter(it => S.srs[it.gid] && S.srs[it.gid].due <= now).sort((a, b) => S.srs[a.gid].due - S.srs[b.gid].due);
+  const lanes = new Map();
+  for (const it of items) if (it.kind === "card" && !S.srs[it.gid]) { const k = it.sid + "/" + it.card.deck; if (!lanes.has(k)) lanes.set(k, []); lanes.get(k).push(it); }
+  const L = [...lanes.values()], nw = [], limit = +S.newLimit;
+  for (let i = 0; nw.length < limit && L.some(l => i < l.length); i++) for (const l of L) if (i < l.length && nw.length < limit) nw.push(l[i]);
+  const freshTotal = L.reduce((n, l) => n + l.length, 0);
+  return {ids:[...due, ...nw].map(it => it.gid), due:due.length, dueQ:due.filter(it => it.kind === "q").length, nw:nw.length, freshTotal,
+    next:items.map(it => S.srs[it.gid]?.due).filter(d => d && d > now).sort((a, b) => a - b)[0]};
+}
+
+/* ================= audio clips ================= */
+let clip = null, clipT = null;
+function stopClip(){ if (clip) { clip.pause(); clip = null; } clearTimeout(clipT); }
+function playClip(src, t, dur = 25){
+  stopClip(); $$("audio").forEach(a => a.pause());
+  const a = new Audio(src); clip = a;
+  a.addEventListener("loadedmetadata", () => { a.currentTime = Math.max(0, t - .3); a.play().catch(() => {}); clipT = setTimeout(stopClip, dur * 1000); }, {once:true});
+  a.addEventListener("error", () => toast("Không mở được file nghe. Hãy giữ thư mục “am-thanh” cạnh trang này."), {once:true});
+}
+document.addEventListener("click", e => {
+  const sp = e.target.closest("[data-say]"); if (sp) { e.preventDefault(); speak(sp.dataset.say); return; }
+  const c = e.target.closest("[data-clip]"); if (c) { e.preventDefault(); playClip(c.dataset.clip, +c.dataset.t); }
+});
+
+/* ================= questions ================= */
+function qHTML(q, n, tag){
+  const say = q.say ? `<button type="button" class="speak sm" data-say="${esc(q.say)}" title="Nghe">🔊</button>` : "";
+  const tg = tag ? `<span class="tag">${tag}</span>` : "";
+  const clipBtn = q.clip && q.audio ? `<p style="margin:0 0 8px"><button type="button" class="link" data-clip="${q.audio}" data-t="${q.t}">▶ Nghe đoạn liên quan</button></p>` : "";
+  if (q.kind === "gap") {
+    const [a, b = ""] = q.q.split("___");
+    return `<div class="q" data-gid="${esc(q.gid)}"><div class="qt"><span class="n">${n}</span>${a}<input class="gap" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Điền từ">${b}${tg}${say}</div>${clipBtn}<div class="fb"></div></div>`;
+  }
+  return `<div class="q" data-gid="${esc(q.gid)}"><div class="qt"><span class="n">${n}</span>${q.q}${tg}${say}</div>${clipBtn}
+    <div class="opts${q.ipa ? " ipa" : ""}">${q.opts.map((o, j) => `<button type="button" class="opt" data-v="${j}"><span class="k">${"ABCDEF"[j]}</span><span>${o}</span></button>`).join("")}</div><div class="fb"></div></div>`;
+}
+function bindOpts(root, onPick){
+  root.addEventListener("click", e => {
+    const o = e.target.closest(".opt"); if (!o || !root.contains(o)) return;
+    const qEl = o.closest(".q"); if (qEl.classList.contains("done")) return;
+    $$(".opt", qEl).forEach(x => x.classList.toggle("sel", x === o));
+    onPick && onPick(qEl, +o.dataset.v);
+  });
+}
+const readAns = (qEl, q) => q.kind === "gap" ? $("input", qEl).value : ($(".opt.sel", qEl) ? +$(".opt.sel", qEl).dataset.v : null);
+const isRight = (q, a) => q.kind === "gap" ? q.a.map(norm).includes(norm(a)) : a === q.a;
+const ansText = (q, a) => q.kind === "gap" ? ((a || "").trim() || "(bỏ trống)") : (a == null ? "(bỏ trống)" : strip(q.opts[a]));
+const rightText = q => q.kind === "gap" ? q.a[0] : strip(q.opts[q.a]);
+function showQ(qEl, q, a, ok){
+  qEl.classList.add("done");
+  if (q.kind === "gap") { const i = $("input", qEl); i.readOnly = true; i.classList.add(ok ? "right" : "wrong"); }
+  else $$(".opt", qEl).forEach(o => { const v = +o.dataset.v; o.classList.remove("right", "wrong"); if (v === q.a) o.classList.add("right"); else if (v === a) o.classList.add("wrong"); });
+  const fb = $(".fb", qEl);
+  fb.innerHTML = (ok ? "✅ Đúng." : "❌ Chưa đúng." + (q.kind === "gap" ? ` Đáp án: <b>${esc(q.a[0])}</b>.` : "")) + " " + (q.ex || "") +
+    (q.audio && q.t != null ? ` <button type="button" class="link" data-clip="${q.audio}" data-t="${q.t}">▶ nghe lại đoạn này</button>` : "");
+  fb.classList.add("show");
+}
+function checkSet(root, qs){
+  let right = 0;
+  for (const q of qs) {
+    const qEl = root.querySelector(`.q[data-gid="${CSS.escape(q.gid)}"]`);
+    const a = readAns(qEl, q), ok = isRight(q, a);
+    if (ok) right++; else markWrong(q, ansText(q, a));
+    showQ(qEl, q, a, ok);
+  }
+  save();
+  return {right, total:qs.length};
+}
+
+/* ================= recordings (kept on this computer) ================= */
+const RecDB = (() => {
+  let dbp = null, mem = [], persistent = true;
+  function open(){
+    if (!dbp) dbp = new Promise(res => {
+      try {
+        const r = indexedDB.open("sohoc-ghiam", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("recs", {keyPath:"id", autoIncrement:true}).createIndex("ex", "ex");
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => { persistent = false; res(null); };
+      } catch(e) { persistent = false; res(null); }
+    });
+    return dbp;
+  }
+  const txDone = t => new Promise((res, rej) => { t.oncomplete = res; t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); });
+  return {
+    persistent: () => persistent,
+    async add(rec){ const db = await open(); if (!db) { rec.id = Date.now(); mem.push(rec); return; } const t = db.transaction("recs", "readwrite"); t.objectStore("recs").add(rec); await txDone(t); },
+    async list(ex){ const db = await open(); if (!db) return mem.filter(r => r.ex === ex);
+      return new Promise((res, rej) => { const r = db.transaction("recs").objectStore("recs").index("ex").getAll(ex); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+    async del(id){ const db = await open(); if (!db) { mem = mem.filter(r => r.id !== id); return; } const t = db.transaction("recs", "readwrite"); t.objectStore("recs").delete(id); await txDone(t); }
+  };
+})();
+let cleanups = [];
+function recorder(el, key, onSaved){
+  el.innerHTML = `<div class="rec-bar"><button type="button" class="btn rec-btn">● Ghi âm</button><span class="rec-time"></span><span class="hint rec-msg"></span></div><ul class="rec-list"></ul>`;
+  const btn = $(".rec-btn", el), time = $(".rec-time", el), msg = $(".rec-msg", el), ul = $(".rec-list", el);
+  let mr = null, stream = null, chunks = [], t0 = 0, tick = null;
+  async function refresh(){
+    let recs = [];
+    try { recs = (await RecDB.list(key)).sort((a, b) => b.at - a.at); } catch(e) {}
+    ul.innerHTML = recs.length ? "" : `<li class="hint" style="border:0;padding:0">Chưa có bản ghi nào.</li>`;
+    for (const r of recs) {
+      const url = URL.createObjectURL(r.blob), ext = (r.mime || "").includes("mp4") ? "m4a" : (r.mime || "").includes("ogg") ? "ogg" : "webm";
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="when">${new Date(r.at).toLocaleString("vi-VN", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"})}</span>
+        <audio controls preload="metadata" src="${url}"></audio>
+        <a class="link" href="${url}" download="ghi-am_${key.replace(/[^\w-]/g, "-")}_${r.at}.${ext}">⬇ Tải</a>
+        <button type="button" class="link del">Xoá</button>`;
+      const del = $(".del", li);
+      del.onclick = async () => {
+        if (!del.dataset.arm) { del.dataset.arm = "1"; del.textContent = "Bấm lần nữa để xoá"; setTimeout(() => { delete del.dataset.arm; del.textContent = "Xoá"; }, 4000); return; }
+        await RecDB.del(r.id).catch(() => {}); refresh();
+      };
+      ul.append(li);
+    }
+  }
+  btn.onclick = async () => {
+    if (mr && mr.state === "recording") { mr.stop(); return; }
+    if (!window.isSecureContext) { msg.textContent = "Trình duyệt chỉ cho ghi âm khi trang mở bằng https:// (hoặc mở file trên máy). Hãy bật HTTPS cho tên miền này."; return; }
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { msg.textContent = "Trình duyệt này chưa ghi âm được. Hãy mở trang bằng Chrome."; return; }
+    try { stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e) { msg.textContent = "Chưa dùng được micro. Khi trình duyệt hỏi, hãy bấm “Cho phép”, rồi thử lại."; return; }
+    $$("audio").forEach(a => a.pause()); stopClip();
+    chunks = []; mr = new MediaRecorder(stream);
+    mr.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    mr.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop()); clearInterval(tick);
+      btn.textContent = "● Ghi âm"; btn.classList.remove("on"); time.textContent = "";
+      const blob = new Blob(chunks, {type:mr.mimeType || "audio/webm"});
+      try {
+        await RecDB.add({ex:key, at:Date.now(), blob, mime:blob.type});
+        msg.textContent = RecDB.persistent() ? "Đã lưu bản ghi. Bấm ▶ để nghe lại." : "Đã ghi, nhưng trình duyệt này không giữ được bản ghi sau khi đóng trang. Bấm ⬇ Tải để lưu lại.";
+      } catch(e) { msg.textContent = "Không lưu được bản ghi."; }
+      refresh(); onSaved && onSaved();
+    };
+    mr.start(); t0 = Date.now();
+    btn.textContent = "■ Dừng"; btn.classList.add("on"); msg.textContent = "Đang ghi âm…";
+    tick = setInterval(() => time.textContent = fmtT((Date.now() - t0) / 1000), 300);
+  };
+  cleanups.push(() => { if (mr && mr.state === "recording") mr.stop(); });
+  refresh();
+}
+
+/* ================= router ================= */
+const main = $("#main");
+let reviewFilter = "all";
+let R = null; // active review session
+function route(){
+  cleanups.forEach(f => { try { f(); } catch(e) {} }); cleanups = [];
+  stopClip(); try { speechSynthesis.cancel(); } catch(e) {}
+  const h = decodeURIComponent(location.hash.replace(/^#/, ""));
+  const [a, b] = h.split("/");
+  if (a !== "on-tap") R = null;
+  if (a === "on-tap") viewReview();
+  else if (a === "loi-sai") viewMistakes();
+  else if (SESS[a]) viewSession(SESS[a], b || "hoc");
+  else viewHome();
+  $$(".top nav a").forEach(x => x.classList.toggle("on", x.dataset.nav === a));
+  updateNav();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+function updateNav(){
+  const q = buildQueue("all", Date.now());
+  $("#navDue").textContent = q.due || "";
+  $("#navWrong").textContent = Object.keys(S.wrong).filter(g => ITEMS[g]).length || "";
+}
+const exDoneCount = s => (s.exercises || []).filter(ex => S.done[ex.key]).length;
+const bestTest = s => { const h = S.tests[s.id] || []; return h.length ? h.reduce((m, x) => x.right / x.total > m.right / m.total ? x : m) : null; };
+
+/* ================= home ================= */
+function viewHome(){
+  const now = Date.now(), q = buildQueue("all", now);
+  const nWrong = Object.keys(S.wrong).filter(g => ITEMS[g]).length;
+  main.innerHTML = `
+    ${storageOK ? "" : `<div class="warn">⚠️ Trình duyệt đang mở trang này không cho lưu tiến độ, nên kết quả sẽ mất khi đóng trang. Hãy mở file <b>Mo_trang_hoc.html</b> bằng Chrome hoặc Safari (nhấp đúp trong Finder).</div>`}
+    <h1 style="margin-bottom:6px">Chào bạn 👋</h1>
+    <p class="hint" style="margin-bottom:18px">Sau mỗi buổi học, làm lần lượt: <b>Học</b> lại bài → làm <b>Bài tập</b> → làm <b>Kiểm tra</b>. Mỗi ngày vào <b>Ôn tập</b> vài phút để ôn thẻ và các câu từng làm sai.</p>
+    <section class="card today">
+      <div>
+        <div class="label">Hôm nay cần ôn</div>
+        <div class="big">${q.due} câu/thẻ đến hạn</div>
+        <p class="hint">${q.dueQ ? `Trong đó có ${q.dueQ} câu bạn từng làm sai. ` : ""}Còn ${q.freshTotal} thẻ mới chưa học.${!q.due && q.next ? " Lần ôn tiếp theo: " + fmtDue(q.next, now).t.toLowerCase() + "." : ""}</p>
+      </div>
+      <div style="display:grid;gap:8px">
+        <a class="btn" href="#on-tap">Ôn ngay</a>
+        <a class="btn ghost" href="#loi-sai">Sổ lỗi sai (${nWrong})</a>
+      </div>
+    </section>
+    <h3 style="margin:24px 0 10px">Các buổi học</h3>
+    ${COURSE.length ? COURSE.slice().reverse().map(s => {
+      const n = (s.exercises || []).length, d = exDoneCount(s), best = bestTest(s);
+      return `<a class="card sess" href="#${s.id}">
+        <div class="label">Buổi ${s.no} · ${fmtDate(s.date)}</div>
+        <h3 style="margin:4px 0 2px">${s.title}</h3>
+        <div class="hint">${s.summary || ""}</div>
+        <div class="row"><span>Bài tập: <b>${d}/${n}</b></span><span>Kiểm tra: <b>${best ? best.right + "/" + best.total : "chưa làm"}</b></span><span>Thẻ: <b>${(s.cards || []).length}</b></span></div>
+      </a>`; }).join("") : `<div class="card hint">Chưa có buổi học nào.</div>`}
+    <details class="card" style="margin-top:24px">
+      <summary style="cursor:pointer;font-weight:600">Sao lưu tiến độ</summary>
+      <p class="hint">Tiến độ (lịch ôn, câu sai, điểm, bài đã làm) được lưu trong trình duyệt của máy này. Thỉnh thoảng hãy xuất file sao lưu; khi đổi máy hoặc đổi trình duyệt, chỉ cần nhập lại. Bản ghi âm không nằm trong file sao lưu, hãy bấm ⬇ Tải ở từng bản ghi nếu muốn giữ.</p>
+      <div class="actions">
+        <button type="button" class="btn ghost" id="bkExport">⬇️ Xuất file sao lưu</button>
+        <label class="btn ghost" style="cursor:pointer">⬆️ Nhập file sao lưu<input type="file" id="bkImport" accept=".json,application/json" hidden></label>
+      </div>
+    </details>`;
+  $("#bkExport").onclick = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify({app:"so-hoc-tieng-anh", v:1, savedAt:new Date().toISOString(), data:S})], {type:"application/json"}));
+    a.download = "so-hoc_sao-luu_" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.append(a); a.click(); a.remove();
+    toast("Đã tạo file sao lưu. Hãy cất file ở nơi an toàn.");
+  };
+  $("#bkImport").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (!d || d.app !== "so-hoc-tieng-anh" || typeof d.data?.srs !== "object") throw 0;
+      S = Object.assign(blank(), d.data); save(); toast("Đã nhập tiến độ từ file sao lưu."); route();
+    } catch(err) { toast("File này không phải file sao lưu của Sổ học tiếng Anh."); }
+  };
+}
+
+/* ================= session ================= */
+const ICON = {listening:"🎧", shadowing:"🗣️", speaking:"🎤", quiz:"✍️"};
+function viewSession(s, tab){
+  const n = (s.exercises || []).length, best = bestTest(s);
+  main.innerHTML = `
+    <div class="sess-head">
+      <a href="#" class="link">← Trang chủ</a>
+      <div class="label" style="margin-top:10px">Buổi ${s.no} · ${fmtDate(s.date)}</div>
+      <h1>${s.title}</h1>
+      ${s.summary ? `<p class="hint">${s.summary}</p>` : ""}
+      <button type="button" class="btn ghost" id="fullBtn" style="margin-top:8px">🔁 Ôn toàn bộ buổi này</button>
+    </div>
+    <div class="tabs" id="tabs">
+      <a href="#${s.id}/hoc" class="${tab === "hoc" ? "on" : ""}">📖 Học</a>
+      <a href="#${s.id}/bai-tap" class="${tab === "bai-tap" ? "on" : ""}">📝 Bài tập (<span id="exCount">${exDoneCount(s)}</span>/${n})</a>
+      ${s.test ? `<a href="#${s.id}/kiem-tra" class="${tab === "kiem-tra" ? "on" : ""}">🏁 Kiểm tra${best ? ` (${best.right}/${best.total})` : ""}</a>` : ""}
+    </div>
+    <div id="tabBody"></div>`;
+  $("#fullBtn").onclick = () => { fullSel = s.id; jumpFull = true; location.hash = "on-tap"; };
+  const box = $("#tabBody");
+  if (tab === "bai-tap") viewExercises(s, box);
+  else if (tab === "kiem-tra" && s.test) viewTest(s, box);
+  else viewLearn(s, box);
+}
+
+/* ---- learn ---- */
+function viewLearn(s, box){
+  box.innerHTML = (s.learn || []).map((b, bi) => {
+    if (b.type === "ipa") return `<section class="card" data-b="${bi}"><h3>${b.title}</h3>${b.intro ? `<p class="hint">${b.intro}</p>` : ""}
+      ${b.groups.map((g, gi) => `<h4>${g.title}</h4>${g.note ? `<p class="hint">${g.note}</p>` : ""}
+        <div class="ipa-grid">${g.sounds.map((x, i) => `<button type="button" class="ipa-cell" data-g="${gi}" data-i="${i}"><span class="sym">/${x.s}/</span><span class="w">${x.w}</span></button>`).join("")}</div>
+        <div class="ipa-detail" data-gd="${gi}" hidden></div>`).join("")}</section>`;
+    if (b.type === "cards") {
+      const decks = s.decks.map(d => `${d.name} (${s.cards.filter(c => c.deck === d.id).length})`).join(" · ");
+      return `<section class="card"><h3>${b.title || "Thẻ ôn tập của buổi này"}</h3><p>${(s.cards || []).length} thẻ: ${decks}.</p>
+        <p class="hint">Thẻ được ôn theo lịch ngắt quãng trong mục Ôn tập: thẻ bạn quên sẽ quay lại sớm, thẻ bạn nhớ sẽ giãn dần.</p>
+        <button type="button" class="btn" data-review="${s.id}">Ôn thẻ của buổi này</button></section>`;
+    }
+    return `<section class="card">${b.title ? `<h3>${b.title}</h3>` : ""}${b.html}</section>`;
+  }).join("");
+  $$(".ipa-cell", box).forEach(cell => cell.onclick = () => {
+    const sec = cell.closest("[data-b]"), b = s.learn[+sec.dataset.b], gi = +cell.dataset.g, x = b.groups[gi].sounds[+cell.dataset.i];
+    $$(".ipa-cell", sec).forEach(c => c.classList.toggle("on", c === cell));
+    $$(".ipa-detail", sec).forEach(d => d.hidden = true);
+    const d = $(`[data-gd="${gi}"]`, sec);
+    d.innerHTML = `<div><span class="sym">/${x.s}/</span> <b>${x.w}</b> <span class="ipa hint">${x.wi || ""}</span> <button type="button" class="speak sm" data-say="${esc(x.w)}">🔊 Nghe từ</button></div>
+      <p style="margin:6px 0 0">${x.tip}</p>${x.more ? `<p class="hint">Thêm ví dụ: ${x.more}</p>` : ""}`;
+    d.hidden = false; speak(x.w);
+  });
+  $$("[data-review]", box).forEach(bt => bt.onclick = () => { reviewFilter = bt.dataset.review; location.hash = "on-tap"; });
+}
+
+/* ---- exercises ---- */
+function badgeHTML(ex){
+  if (!S.done[ex.key]) return `<span class="badge">Chưa làm</span>`;
+  const sc = S.scores[ex.key];
+  return `<span class="badge ok">✓ ${sc ? sc.right + "/" + sc.total : "Đã làm"}</span>`;
+}
+function setDone(s, ex, val){
+  if (val) S.done[ex.key] = true; else delete S.done[ex.key];
+  save();
+  const bd = $(`[data-badge="${CSS.escape(ex.key)}"]`); if (bd) bd.innerHTML = badgeHTML(ex);
+  const c = $("#exCount"); if (c) c.textContent = exDoneCount(s);
+}
+function viewExercises(s, box){
+  const exs = s.exercises || [];
+  const firstOpen = exs.findIndex(ex => !S.done[ex.key]);
+  box.innerHTML = (s.homeworkNote ? `<p class="note">${s.homeworkNote}</p>` : "") + exs.map((ex, i) => `
+    <details class="card ex" data-i="${i}"${i === firstOpen ? " open" : ""}>
+      <summary><span aria-hidden="true">${ICON[ex.type] || "📝"}</span><span class="ex-t">${ex.title}</span><span data-badge="${esc(ex.key)}">${badgeHTML(ex)}</span></summary>
+      <div class="ex-body"></div>
+    </details>`).join("");
+  exs.forEach((ex, i) => renderEx(s, ex, $(`details[data-i="${i}"] .ex-body`, box)));
+}
+function renderEx(s, ex, el){
+  const fresh = el.cloneNode(false); el.replaceWith(fresh); // drop old listeners when an exercise is redone
+  ({listening:exListening, quiz:exQuiz, shadowing:exShadow, speaking:exSpeak}[ex.type] || exQuiz)(s, ex, fresh);
+}
+function qsBlock(ex){
+  const qs = allQs(ex);
+  return qs.map((q, i) => qHTML(q, ex.gist ? (i === 0 ? "★" : i + ".") : (i + 1) + ".", ex.gist && i === 0 ? "nghe ý chính" : "")).join("");
+}
+function wireCheck(s, ex, el, after){
+  bindOpts(el);
+  $("[data-act=check]", el).onclick = () => {
+    const r = checkSet(el, allQs(ex));
+    S.scores[ex.key] = r; setDone(s, ex, true);
+    $(".score", el).textContent = `Đúng ${r.right}/${r.total} câu` + (r.right < r.total ? " · câu sai đã vào Sổ lỗi sai" : " 🎉");
+    $("[data-act=check]", el).disabled = true;
+    after && after();
+  };
+  $("[data-act=reset]", el).onclick = () => renderEx(s, ex, el);
+}
+function exQuiz(s, ex, el){
+  el.innerHTML = `${ex.intro ? `<p>${ex.intro}</p>` : ""}<div class="qs">${qsBlock(ex)}</div>
+    <div class="actions"><button type="button" class="btn" data-act="check">Kiểm tra đáp án</button><button type="button" class="btn ghost" data-act="reset">Làm lại</button><span class="score"></span></div>`;
+  wireCheck(s, ex, el);
+}
+function exListening(s, ex, el){
+  el.innerHTML = `
+    <p class="hint"><b>Bước 1.</b> Đọc trước các câu hỏi, gạch chân từ khóa. <b>Bước 2.</b> Nghe và trả lời: lần 1 chỉ câu ★, lần 2–3 các câu chi tiết. <b>Bước 3.</b> Kiểm tra đáp án, rồi đọc transcript.</p>
+    <div class="player">
+      <audio controls preload="metadata" src="${ex.audio}"></audio>
+      <p class="warn" data-aerr hidden>Không mở được file nghe <code>${esc(ex.audio)}</code>. Hãy giữ thư mục <b>am-thanh</b> nằm cạnh file Mo_trang_hoc.html.</p>
+      <div class="speeds">Tốc độ: ${[0.75, 0.9, 1].map(r => `<button type="button" class="chip${r === 1 ? " on" : ""}" data-rate="${r}">${r}×</button>`).join("")}<span class="plays">Đã nghe: <b>0</b> lần</span></div>
+    </div>
+    <div class="qs" style="margin-top:8px">${qsBlock(ex)}</div>
+    <div class="actions"><button type="button" class="btn" data-act="check">Kiểm tra đáp án</button><button type="button" class="btn ghost" data-act="reset">Làm lại</button><span class="score"></span></div>
+    <div class="transcript" hidden><h4>Transcript</h4><p class="hint">Bấm mốc thời gian để nghe lại đoạn đó. Từ tô vàng có trong thẻ từ vựng.</p>
+      ${(ex.transcript || []).map(([t, txt]) => `<p><button type="button" class="ts" data-t="${t}">${fmtT(t)}</button> ${txt}</p>`).join("")}</div>`;
+  const au = $("audio", el);
+  au.addEventListener("error", () => $("[data-aerr]", el).hidden = false);
+  let plays = 0, fresh = true;
+  au.addEventListener("play", () => { stopClip(); if (fresh || au.currentTime < 1) { plays++; $(".plays b", el).textContent = plays; } fresh = false; });
+  au.addEventListener("ended", () => fresh = true);
+  $$("[data-rate]", el).forEach(b => b.onclick = () => { au.playbackRate = +b.dataset.rate; $$("[data-rate]", el).forEach(x => x.classList.toggle("on", x === b)); });
+  const seek = t => { au.currentTime = Math.max(0, t - .3); au.play().catch(() => {}); };
+  $$(".ts", el).forEach(b => b.onclick = () => seek(+b.dataset.t));
+  el.addEventListener("click", e => { const c = e.target.closest("[data-clip]"); if (c && el.contains(c)) { e.stopPropagation(); seek(+c.dataset.t); } });
+  cleanups.push(() => au.pause());
+  wireCheck(s, ex, el, () => $(".transcript", el).hidden = false);
+}
+function doneToggle(s, ex, el){
+  const b = $("[data-act=done]", el);
+  const paint = () => b.textContent = S.done[ex.key] ? "↺ Bỏ đánh dấu đã làm" : "✓ Đánh dấu đã làm";
+  b.onclick = () => { setDone(s, ex, !S.done[ex.key]); paint(); };
+  paint();
+  return () => { setDone(s, ex, true); paint(); };
+}
+function exShadow(s, ex, el){
+  const mine = S.links[ex.key] || [];
+  const vids = [...(ex.videos || []), ...mine.map(u => ({url:u, mine:true}))];
+  el.innerHTML = `${ex.intro ? `<p>${ex.intro}</p>` : ""}
+    <h4>Video để shadowing</h4>
+    <ul class="links">${vids.length ? vids.map(v => `<li><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title || v.url)}</a>${v.mine ? ` <button type="button" class="link" data-rm="${esc(v.url)}">xoá</button>` : ""}</li>`).join("") : `<li class="hint">Chưa có video. Dán link YouTube cô gửi vào ô dưới đây.</li>`}</ul>
+    <form class="addlink"><input type="url" placeholder="Dán link YouTube…" aria-label="Link video" required><button class="btn ghost">Thêm video</button></form>
+    ${ex.how ? `<h4>Cách shadowing</h4>${ex.how}` : ""}
+    <h4>Câu luyện âm đuôi</h4>
+    <p class="hint">Bấm 🔊 để nghe máy đọc mẫu, rồi đọc theo. Chữ tô màu là âm cần đọc rõ.</p>
+    <ol class="sent">${ex.sentences.map(x => `<li><span class="en">${x.html}</span><button type="button" class="speak sm" data-say="${esc(strip(x.html))}">🔊</button>${x.note ? `<div class="hint">${x.note}</div>` : ""}</li>`).join("")}</ol>
+    <h4>Ghi âm giọng bạn</h4>
+    <p class="hint">Ghi âm khi đọc theo video hoặc các câu trên, rồi nghe lại xem đã đọc rõ âm cuối chưa. Bản ghi được lưu trên máy này.</p>
+    <div class="rec"></div>
+    <div class="actions"><button type="button" class="btn ghost" data-act="done"></button></div>`;
+  const markDone = doneToggle(s, ex, el);
+  recorder($(".rec", el), ex.key, markDone);
+  $(".addlink", el).onsubmit = e => {
+    e.preventDefault();
+    const v = $("input", e.target).value.trim();
+    if (!/^https?:\/\//i.test(v)) { toast("Link cần bắt đầu bằng http:// hoặc https://"); return; }
+    S.links[ex.key] = [...mine.filter(u => u !== v), v]; save(); exShadow(s, ex, el);
+  };
+  $$("[data-rm]", el).forEach(b => b.onclick = () => { S.links[ex.key] = mine.filter(u => u !== b.dataset.rm); save(); exShadow(s, ex, el); });
+}
+function exSpeak(s, ex, el){
+  el.innerHTML = `<p style="font-size:17px">${ex.prompt}</p>
+    ${ex.outline ? `<h4>Dàn ý gợi ý</h4><ol class="outline">${ex.outline.map(o => `<li>${o}</li>`).join("")}</ol>` : ""}
+    ${ex.phrases ? `<h4>Từ và cụm nên dùng</h4><div class="phr">${ex.phrases.map(p => `<span>${p}</span>`).join("")}</div>` : ""}
+    ${ex.checklist ? `<h4>Tự kiểm tra khi nghe lại</h4><ul>${ex.checklist.map(c => `<li>${c}</li>`).join("")}</ul>` : ""}
+    ${ex.sample ? `<details style="margin-top:14px"><summary class="link" style="cursor:pointer">Xem bài nói mẫu</summary><p style="margin:10px 0 6px">${ex.sample}</p><button type="button" class="speak" data-say="${esc(strip(ex.sample))}">🔊 Nghe bài mẫu</button></details>` : ""}
+    <h4>Ghi âm bài nói của bạn</h4><div class="rec"></div>
+    <div class="actions"><button type="button" class="btn ghost" data-act="done"></button></div>`;
+  const markDone = doneToggle(s, ex, el);
+  recorder($(".rec", el), ex.key, markDone);
+}
+
+/* ---- test ---- */
+function viewTest(s, box){
+  const T = s.test, hist = S.tests[s.id] || [];
+  box.innerHTML = `<div class="card">
+    <h3>Bài kiểm tra Buổi ${s.no}</h3>
+    <p class="hint">${T.qs.length} câu, gồm cả phần học lẫn bài tập của buổi. Làm hết rồi bấm “Nộp bài”. Câu sai sẽ vào Sổ lỗi sai và quay lại trong Ôn tập cho tới khi bạn làm đúng.</p>
+    ${hist.length ? `<p class="hint">Các lần đã làm: ${hist.map(x => `<b>${x.right}/${x.total}</b> (${new Date(x.at).toLocaleDateString("vi-VN")})`).join(" · ")}</p>` : ""}
+    <div class="qs">${T.qs.map((q, i) => qHTML(q, (i + 1) + ".", q.tag || "")).join("")}</div>
+    <div class="actions"><button type="button" class="btn" data-act="submit">Nộp bài</button><button type="button" class="btn ghost" data-act="redo">Làm lại từ đầu</button><span class="score"></span></div>
+  </div>`;
+  bindOpts(box);
+  let armed = false;
+  $("[data-act=submit]", box).onclick = e => {
+    const empty = T.qs.filter(q => { const a = readAns($(`.q[data-gid="${CSS.escape(q.gid)}"]`, box), q); return a == null || a === ""; }).length;
+    if (empty && !armed) { armed = true; $(".score", box).textContent = `Còn ${empty} câu chưa làm. Bấm “Nộp bài” lần nữa nếu vẫn muốn nộp.`; return; }
+    const r = checkSet(box, T.qs);
+    (S.tests[s.id] = S.tests[s.id] || []).push({at:Date.now(), right:r.right, total:r.total}); save();
+    const pct = r.right / r.total;
+    $(".score", box).textContent = `Kết quả: ${r.right}/${r.total} câu. ` + (pct >= .9 ? "Rất tốt! 🎉" : pct >= .7 ? "Khá tốt, ôn lại các câu sai nhé." : "Hãy xem lại phần Học rồi làm lại.");
+    e.target.disabled = true;
+    const tabT = $$("#tabs a")[2]; if (tabT) { const b = bestTest(s); tabT.textContent = `🏁 Kiểm tra (${b.right}/${b.total})`; }
+    updateNav();
+  };
+  $("[data-act=redo]", box).onclick = () => viewTest(s, box);
+}
+
+/* ================= review ================= */
+function viewReview(){
+  if (R) return renderCard();
+  const now = Date.now();
+  if (reviewFilter !== "all" && !SESS[reviewFilter]) reviewFilter = "all";
+  const q = buildQueue(reviewFilter, now);
+  main.innerHTML = `<h1 style="margin-bottom:6px">Ôn tập</h1>
+    <p class="hint" style="margin-bottom:14px">Gồm thẻ (từ vựng, IPA, âm đuôi) và các câu bạn từng làm sai. Câu/thẻ bạn quên sẽ quay lại ngay trong lượt; câu/thẻ bạn nhớ sẽ giãn dần 1 → 3 → 7 → 15+ ngày.</p>
+    ${storageOK ? "" : `<div class="warn">⚠️ Trình duyệt này không lưu được tiến độ ôn tập. Hãy mở trang bằng Chrome hoặc Safari.</div>`}
+    <div class="card">
+      <div class="setup">
+        <label for="rvSess">Ôn
+          <select id="rvSess"><option value="all">Tất cả các buổi</option>${COURSE.map(s => `<option value="${s.id}"${reviewFilter === s.id ? " selected" : ""}>Buổi ${s.no}: ${strip(s.title)}</option>`).join("")}</select>
+        </label>
+        <label for="rvNew">Thẻ mới mỗi lượt
+          <select id="rvNew">${["5", "10", "20", "9999"].map(v => `<option value="${v}"${S.newLimit === v ? " selected" : ""}>${v === "9999" ? "Tất cả" : v}</option>`).join("")}</select>
+        </label>
+      </div>
+      <div class="stats">
+        <div><b>${q.due}</b><span>Đến hạn</span></div>
+        <div><b>${q.dueQ}</b><span>Câu sai cần làm lại</span></div>
+        <div><b>${q.nw}</b><span>Thẻ mới lượt này</span></div>
+      </div>
+      <button type="button" class="btn" id="rvStart"${q.ids.length ? "" : " disabled"}>Bắt đầu ôn (${q.ids.length})</button>
+      <p class="hint">${q.ids.length ? `Lượt này: ${q.due} đến hạn + ${q.nw} thẻ mới.` : "Bạn đã ôn xong." + (q.next ? " Lần ôn tiếp theo: " + fmtDue(q.next, now).t.toLowerCase() + "." : "")}</p>
+    </div>`;
+  $("#rvSess").onchange = e => { reviewFilter = e.target.value; viewReview(); };
+  $("#rvNew").onchange = e => { S.newLimit = e.target.value; save(); viewReview(); };
+  $("#rvStart").onclick = () => startReview(q.ids);
+  fullBox();
+}
+
+/* ---- ôn toàn bộ một buổi: mọi thẻ + mọi câu hỏi, bất kể lịch ---- */
+let fullSel = null, jumpFull = false;
+function fullParts(s){
+  const parts = s.decks.map(d => ({id:"deck-" + d.id, name:"Thẻ: " + d.name, ids:(s.cards || []).filter(c => c.deck === d.id).map(c => c.gid)}));
+  parts.push({id:"ex", name:"Câu hỏi trong bài tập", ids:(s.exercises || []).flatMap(ex => allQs(ex).map(q => q.gid)), shuffle:true});
+  if (s.test) parts.push({id:"test", name:"Câu hỏi bài kiểm tra", ids:s.test.qs.map(q => q.gid), shuffle:true});
+  return parts.filter(p => p.ids.length);
+}
+const shuffled = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function fullBox(){
+  if (!COURSE.length) return;
+  if (!SESS[fullSel]) fullSel = SESS[reviewFilter] ? reviewFilter : COURSE[COURSE.length - 1].id;
+  const s = SESS[fullSel], parts = fullParts(s), saved = S.full && SESS[S.full.sid] ? S.full : null;
+  const box = document.createElement("div");
+  box.className = "card"; box.id = "fullBox";
+  box.innerHTML = `<h3>Ôn toàn bộ một buổi</h3>
+    <p class="hint">Đi qua <b>tất cả</b> kiến thức của buổi: mọi thẻ và mọi câu hỏi trong bài tập, bài kiểm tra, không cần chờ lịch ôn. Câu sai sẽ quay lại ngay trong lượt và được ghi vào Sổ lỗi sai. Bạn có thể dừng giữa chừng rồi tiếp tục sau.</p>
+    <div class="setup"><label for="fullSess">Buổi
+      <select id="fullSess">${COURSE.map(x => `<option value="${x.id}"${x.id === s.id ? " selected" : ""}>Buổi ${x.no}: ${strip(x.title)}</option>`).join("")}</select></label></div>
+    <div style="display:grid;gap:4px;margin:12px 0">${parts.map(p => `<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-part="${p.id}" checked> ${p.name} <span class="hint" style="margin:0">(${p.ids.length})</span></label>`).join("")}</div>
+    <div class="actions" style="margin-top:4px">
+      <button type="button" class="btn" id="fullStart"></button>
+      ${saved ? `<button type="button" class="btn ghost" id="fullResume">Tiếp tục lượt đang dở: Buổi ${SESS[saved.sid].no}, còn ${saved.queue.filter(g => ITEMS[g]).length}</button>` : ""}
+    </div>`;
+  main.append(box);
+  const chosen = () => parts.filter(p => $(`[data-part="${p.id}"]`, box).checked).flatMap(p => p.shuffle ? shuffled(p.ids) : p.ids);
+  const paint = () => { const n = chosen().length; $("#fullStart").textContent = `Ôn toàn bộ Buổi ${s.no} (${n})`; $("#fullStart").disabled = !n; };
+  $$("[data-part]", box).forEach(cb => cb.onchange = paint); paint();
+  $("#fullSess").onchange = e => { fullSel = e.target.value; jumpFull = true; viewReview(); };
+  $("#fullStart").onclick = () => startReview(chosen(), {mode:"full", sid:s.id});
+  if (saved) $("#fullResume").onclick = () => startReview(saved.queue.filter(g => ITEMS[g]), {mode:"full", sid:saved.sid, total:saved.total, doneN:saved.doneN});
+  if (jumpFull) { jumpFull = false; requestAnimationFrame(() => box.scrollIntoView({block:"start"})); }
+}
+function persistFull(){
+  if (R && R.mode === "full") S.full = {sid:R.sid, queue:R.queue.slice(), total:R.total, doneN:R.doneN};
+}
+function startReview(ids, opt = {}){
+  if (!ids.length) return;
+  R = {mode:opt.mode || "due", sid:opt.sid, queue:ids.slice(), total:opt.total || ids.length, doneN:opt.doneN || 0,
+    tally:{1:0, 2:0, 3:0, 4:0}, qRight:0, qWrong:0, phase:"front", pick:null};
+  persistFull(); save();
+  if (location.hash !== "#on-tap") location.hash = "on-tap"; else renderCard();
+}
+function renderCard(){
+  if (!R.queue.length) return finishReview();
+  const it = ITEMS[R.queue[0]];
+  if (!it) { R.queue.shift(); return renderCard(); }
+  R.phase = "front"; R.pick = null;
+  const sName = "Buổi " + SESS[it.sid].no;
+  const label = (R.mode === "full" ? "Ôn toàn bộ · " : "") + (it.kind === "card" ? sName + " · " + deckName(it.sid, it.card.deck) : sName + " · " + (S.wrong[it.gid] ? "Câu từng làm sai" : "Câu hỏi"));
+  main.innerHTML = `
+    <div class="rev-top"><button type="button" class="btn ghost" id="rvQuit">← Dừng ôn</button><span>Còn ${R.queue.length} · đã xong ${R.doneN}/${R.total}</span></div>
+    <div class="bar"><i style="width:${Math.round(R.doneN / R.total * 100)}%"></i></div>
+    <article class="idx" aria-live="polite">
+      <div class="top2"><span>${label}</span><span>${it.kind === "card" && !S.srs[it.gid] ? "Thẻ mới" : ""}</span></div>
+      <div class="face" id="rvFace"></div>
+    </article>
+    <div id="rvCtl"></div>
+    <p class="kbd">Phím tắt: <b>Space</b> hiện đáp án / tiếp tục · <b>1–4</b> chấm điểm thẻ · chọn đáp án bằng phím số</p>`;
+  $("#rvQuit").onclick = () => {
+    const full = R.mode === "full"; R = null; viewReview(); updateNav();
+    if (full) toast("Đã lưu chỗ đang ôn. Bấm “Tiếp tục lượt đang dở” để ôn tiếp.");
+  };
+  const face = $("#rvFace"), ctl = $("#rvCtl");
+  if (it.kind === "q") {
+    const q = it.q;
+    face.classList.add("left");
+    face.innerHTML = `<div class="hint">${esc(q.from)}</div>` + qHTML(Object.assign({}, q, {clip:!!(q.audio && q.t != null)}), "", "");
+    const qEl = $(".q", face);
+    if (q.kind === "gap") {
+      ctl.innerHTML = `<button type="button" class="btn wide" id="rvCheck">Kiểm tra</button>`;
+      $("#rvCheck").onclick = () => gradeReviewQ(it, qEl, readAns(qEl, q));
+      const inp = $("input", qEl); inp.focus();
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); if (R.phase === "front") gradeReviewQ(it, qEl, inp.value); else nextAfterQ(); } });
+    } else {
+      bindOpts(face, (el, v) => gradeReviewQ(it, qEl, v));
+    }
+    return;
+  }
+  const c = it.card;
+  if (c.type === "pick") {
+    face.innerHTML = `<div class="fpos">${c.prompt}</div><div class="fw">${c.front}</div>${c.example ? `<div class="fex">“${c.example}”</div>` : ""}
+      <div class="choices">${c.opts.map((o, k) => `<button type="button" class="choice" data-k="${k}">${o}</button>`).join("")}</div>`;
+    $$(".choice", face).forEach(b => b.onclick = () => { if (R.phase === "front") { R.pick = +b.dataset.k; reveal(); } });
+    return;
+  }
+  if (c.type === "note") face.innerHTML = `<div class="fpos">Quy tắc</div><div class="fw rule">${c.front}</div>`;
+  else if (c.type === "ipa") face.innerHTML = `<div class="fpos">Âm này đọc thế nào? Nghĩ ra một từ có âm này.</div><div class="fw sym">/${c.front}/</div>`;
+  else face.innerHTML = `<div class="fw">${c.front}</div>${c.ipa ? `<div class="fipa">${c.ipa}</div>` : ""}${c.pos ? `<div class="fpos">${c.pos}</div>` : ""}<button type="button" class="speak" data-say="${esc(c.say || c.front)}">🔊 Nghe</button>`;
+  ctl.innerHTML = `<button type="button" class="btn wide" id="rvShow">Hiện đáp án (Space)</button>`;
+  $("#rvShow").onclick = reveal;
+}
+function reveal(){
+  if (!R || R.phase !== "front") return;
+  const it = ITEMS[R.queue[0]]; if (it.kind !== "card") return;
+  const c = it.card, face = $("#rvFace");
+  R.phase = "back";
+  if (c.type === "pick") {
+    const ok = R.pick === c.a;
+    $$(".choice", face).forEach(b => { const k = +b.dataset.k; if (k === c.a) b.classList.add("right"); else if (k === R.pick) b.classList.add("wrong"); b.disabled = true; });
+    face.insertAdjacentHTML("beforeend", `<hr class="divider"><div class="verdict ${ok ? "ok" : "no"}">${ok ? "✓ Đúng" : "✗ Chưa đúng: đáp án là " + c.opts[c.a]}</div>
+      ${c.ipa ? `<div class="fipa">${c.ipa}</div>` : ""}<div>${c.back}</div><button type="button" class="speak" data-say="${esc(c.say || c.front)}">🔊 Nghe</button>`);
+  } else if (c.type === "note") {
+    face.insertAdjacentHTML("beforeend", `<hr class="divider"><div class="fvi">${c.back}</div>${c.example ? `<div class="fex">${c.example}</div>` : ""}`);
+  } else if (c.type === "ipa") {
+    face.insertAdjacentHTML("beforeend", `<hr class="divider"><div class="fw" style="font-size:28px">${c.w}</div><div class="fipa">${c.wi || ""}</div><div style="max-width:52ch">${c.back}</div><button type="button" class="speak" data-say="${esc(c.w)}">🔊 Nghe từ</button>`);
+  } else {
+    face.insertAdjacentHTML("beforeend", `<hr class="divider"><div class="fvi">${c.back}</div>${c.example ? `<div class="fex">“${c.example}”</div><button type="button" class="speak" data-say="${esc(strip(c.example))}">🔊 Nghe câu</button>` : ""}`);
+  }
+  const now = Date.now();
+  $("#rvCtl").innerHTML = `<div class="rate">${[[1, "Quên"], [2, "Khó"], [3, "Nhớ"], [4, "Dễ"]].map(([r, l]) => `<button type="button" data-r="${r}"${c.type === "pick" && R.pick !== c.a && r === 1 ? ' class="hint-on"' : ""}>${l}<small>${fmtIvl(schedule(S.srs[it.gid], r, now))}</small></button>`).join("")}</div>`;
+  $$("#rvCtl [data-r]").forEach(b => b.onclick = () => rate(+b.dataset.r));
+}
+function rate(r){
+  if (!R || R.phase !== "back") return;
+  const gid = R.queue.shift();
+  S.srs[gid] = schedule(S.srs[gid], r, Date.now());
+  R.tally[r]++;
+  if (r === 1) R.queue.push(gid); else R.doneN++;
+  persistFull(); save();
+  renderCard();
+}
+function gradeReviewQ(it, qEl, a){
+  if (R.phase !== "front") return;
+  const q = it.q;
+  if (q.kind === "gap" && !(a || "").trim()) { $("input", qEl).focus(); return; }
+  R.phase = "answered";
+  const ok = isRight(q, a);
+  showQ(qEl, q, a, ok);
+  R.lastOk = ok;
+  if (ok) R.qRight++; else { R.qWrong++; const w = S.wrong[q.gid] || {count:0}; S.wrong[q.gid] = {count:w.count + 1, last:Date.now(), ans:ansText(q, a)}; }
+  $("#rvCtl").innerHTML = `<button type="button" class="btn wide" id="rvNext">${ok ? "Đúng rồi! Tiếp tục (Space)" : "Đã hiểu, làm câu khác (Space)"}</button>`;
+  $("#rvNext").onclick = nextAfterQ;
+  $("#rvNext").focus();
+}
+function nextAfterQ(){
+  if (!R || R.phase !== "answered") return;
+  const gid = R.queue.shift(), now = Date.now();
+  if (R.mode === "full" && R.lastOk && !S.srs[gid]) { /* câu chưa từng sai: làm đúng thì không cần đưa vào lịch ôn */ }
+  else if (R.mode === "full" && !R.lastOk) { const rec = schedule(S.srs[gid], 1, now); rec.due = now; S.srs[gid] = rec; }
+  else S.srs[gid] = schedule(S.srs[gid], R.lastOk ? 3 : 1, now);
+  if (R.lastOk) R.doneN++; else R.queue.push(gid);
+  persistFull(); save();
+  renderCard();
+}
+function finishReview(){
+  const t = R.tally, now = Date.now(), q = buildQueue("all", now), full = R.mode === "full";
+  if (full) { delete S.full; save(); }
+  main.innerHTML = `<div class="card" style="text-align:center">
+    <h1>${full ? `Xong ôn toàn bộ Buổi ${SESS[R.sid].no} 🎉` : "Xong lượt ôn 🎉"}</h1>
+    <p style="margin:14px 0">Thẻ: Quên <b>${t[1]}</b> · Khó <b>${t[2]}</b> · Nhớ <b>${t[3]}</b> · Dễ <b>${t[4]}</b><br>Câu hỏi: đúng <b>${R.qRight}</b> · sai <b>${R.qWrong}</b></p>
+    <p class="hint">${q.next ? "Lần ôn tiếp theo: " + fmtDue(q.next, now).t.toLowerCase() + ". " : ""}${storageOK ? "Tiến độ đã được lưu." : "Trình duyệt này không lưu được tiến độ."}</p>
+    <div class="actions" style="justify-content:center"><a class="btn" href="#">Về trang chủ</a><button type="button" class="btn ghost" id="rvAgain">Ôn tiếp</button></div></div>`;
+  R = null; updateNav();
+  $("#rvAgain").onclick = () => viewReview();
+}
+document.addEventListener("keydown", e => {
+  if (!R || !location.hash.startsWith("#on-tap") || ["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
+  const it = ITEMS[R.queue[0]]; if (!it) return;
+  const k = e.key;
+  if (it.kind === "q") {
+    if (R.phase === "front" && it.q.kind === "mc" && /^[1-6]$/.test(k)) { const o = $$("#rvFace .opt")[+k - 1]; if (o) o.click(); }
+    else if (R.phase === "answered" && (k === " " || k === "Enter")) { e.preventDefault(); nextAfterQ(); }
+    return;
+  }
+  if (R.phase === "front") {
+    if (it.card.type === "pick") { if (/^[1-6]$/.test(k)) { const b = $$("#rvFace .choice")[+k - 1]; if (b) b.click(); } }
+    else if (k === " " || k === "Enter") { e.preventDefault(); reveal(); }
+  } else if (R.phase === "back" && /^[1-4]$/.test(k)) rate(+k);
+});
+
+/* ================= mistakes ================= */
+let misFilter = "all";
+function viewMistakes(){
+  const now = Date.now();
+  const list = Object.entries(S.wrong).filter(([g]) => ITEMS[g] && (misFilter === "all" || ITEMS[g].sid === misFilter)).sort((a, b) => b[1].last - a[1].last);
+  main.innerHTML = `<h1 style="margin-bottom:6px">Sổ lỗi sai</h1>
+    <p class="hint" style="margin-bottom:14px">Mọi câu bạn từng làm sai trong bài tập và bài kiểm tra. Các câu này tự quay lại trong Ôn tập; khi bạn làm đúng nhiều lần, khoảng cách ôn sẽ giãn ra.</p>
+    <div class="card">
+      <div class="setup" style="justify-content:space-between">
+        <label for="misSess">Lọc
+          <select id="misSess"><option value="all">Tất cả các buổi</option>${COURSE.map(s => `<option value="${s.id}"${misFilter === s.id ? " selected" : ""}>Buổi ${s.no}</option>`).join("")}</select>
+        </label>
+        <button type="button" class="btn" id="misGo"${list.length ? "" : " disabled"}>Làm lại ${list.length} câu này</button>
+      </div>
+      <div style="margin-top:10px">${list.length ? list.map(([g, w]) => {
+        const it = ITEMS[g], q = it.q, rec = S.srs[g];
+        return `<div class="mis"><div class="from">Buổi ${SESS[it.sid].no} · ${esc(q.from)} · sai ${w.count} lần · ôn: ${fmtDue(rec?.due, now).t.toLowerCase()}</div>
+          <div class="qq">${q.q.replace("___", "_____")}</div>
+          <div class="ans"><span class="no">✗ Bạn trả lời: ${esc(w.ans)}</span><span class="yes">✓ Đáp án: ${esc(rightText(q))}</span>${q.ex ? `<span class="hint">${q.ex}</span>` : ""}</div>
+          <button type="button" class="link" data-drop="${esc(g)}" style="margin-top:4px">Bỏ khỏi sổ</button></div>`;
+      }).join("") : `<p class="hint">Chưa có câu sai nào. 👏</p>`}</div>
+    </div>`;
+  $("#misSess").onchange = e => { misFilter = e.target.value; viewMistakes(); };
+  $("#misGo").onclick = () => startReview(list.map(([g]) => g));
+  $$("[data-drop]", main).forEach(b => b.onclick = () => {
+    if (!b.dataset.arm) { b.dataset.arm = "1"; b.textContent = "Bấm lần nữa để bỏ khỏi sổ"; setTimeout(() => { delete b.dataset.arm; b.textContent = "Bỏ khỏi sổ"; }, 4000); return; }
+    delete S.wrong[b.dataset.drop]; delete S.srs[b.dataset.drop]; save(); viewMistakes(); updateNav();
+  });
+}
+
+route();
+})();
+</script>
+</body>
+</html>

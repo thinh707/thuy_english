@@ -1,0 +1,10 @@
+# docker compose up -d --build   → mở http://<server>:8080
+# Muốn ghi âm được thì phải đặt sau HTTPS (xem README.md, mục Triển khai).
+services:
+  so-hoc:
+    build: .
+    image: so-hoc-tieng-anh
+    container_name: so-hoc
+    ports:
+      - "8080:80"
+    restart: unless-stopped

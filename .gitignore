@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Đĩa CD gốc (114 MB, chỉ để dùng trên máy). Trang web dùng bản nén trong So_hoc_tieng_Anh/am-thanh/
+CD 1/
+CD */
+
+# Công cụ của Claude Code: bản phác thảo, cài đặt riêng trên máy
+.superpowers/
+.claude/settings.local.json
+.codegraph/
+
+# Trang cũ chạy trên claude.ai (cần window.claude), không chạy được trên server
+Kho_the.html
+
+# Python, file tạm
+__pycache__/
+*.pyc
+.venv/
+*.tmp
